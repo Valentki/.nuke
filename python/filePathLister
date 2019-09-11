@@ -1,0 +1,36 @@
+##************************************************************************************##
+## -------------------------------------------------------------------------------------
+# listNavigator.py
+# Version: 1.0.0 (Major,Minor,Revision)
+# Author: Ben McEwan
+#
+# Last Modified by: Kalvin Irawan
+# Last Updated: September 11th, 2019
+## -------------------------------------------------------------------------------------
+##************************************************************************************##
+
+
+## -------------------------------------------------------------------------------------
+# USAGE:
+#
+# - List all files being read into a nuke script
+## -------------------------------------------------------------------------------------
+
+import nuke
+import os
+
+def filePathLister():
+
+	print "\n\nNuke Script: "+os.path.basename(nuke.root()['name'].value())
+	print "\nFILE & VERSION LIST"
+
+	node_classes = ['Read','ReadGeo','Camera']
+	node_list = []
+
+	for i in nuke.allNodes():
+		for x in node_classes:
+			if i.knob('file') and i.Class()== x:
+				node_list.append(i)
+
+	for node in node_list:
+		print node.name()
