@@ -1,0 +1,31 @@
+##************************************************************************************##
+## -------------------------------------------------------------------------------------
+# listNavigator.py
+# Version: 1.0.0 (Major,Minor,Revision)
+# Author: Ben McEwan
+#
+# Last Modified by: Kalvin Irawan
+# Last Updated: September 10th, 2019
+## -------------------------------------------------------------------------------------
+##************************************************************************************##
+
+
+import nuke
+
+
+# Define the function
+def listNavigator():
+	
+	node_list = []
+
+	for i in nuke.selectedNodes():
+		node_list.append(i.name())
+
+	node_list.sort()
+
+	print "NODES IN LIST:\n"
+
+	for i in node_list:
+		print "- "+i
+
+	nuke.message("There are "+str(len(node_list))+" nodes in the list.")
