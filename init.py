@@ -1,14 +1,30 @@
+##************************************************************************************##
 ## -------------------------------------------------------------------------------------
 # init.py
-# Version: 1.0.0 (Major,Minor,Revision)
-# Last Updated: August 22nd, 2019
+# Version: 1.0.4 (Major,Minor,Revision)
+#
+# Last Modified by: Kalvin Irawan
+# Last Updated: September 11th, 2019
 ## -------------------------------------------------------------------------------------
+##************************************************************************************##
 
 
 
-## Per show plugin path ---------------------------------------------------
+
+## Global plugin path ----------------------------------------------------------------
+nuke.pluginAddPath('./python/rvnuke')
 nuke.pluginAddPath('./gizmos')
-nuke.pluginAddPath('./python')
+nuke.pluginAddPath('./python/Lumine')
+nuke.pluginAddPath('./icons/lmn_Tools')
+nuke.pluginAddPath('./icons/lmn_Tools/lmnShuffle')
+
+
+
+
+## Per show plugin path ----------------------------------------------------------------
+nuke.pluginAddPath('./gizmos/HOP')
+nuke.pluginAddPath('./icons/HOP')
+
 
 
 ## Cryptomatte -------------------------------------------------------------------------
@@ -20,19 +36,20 @@ nuke.pluginAddPath('./python')
 
 nuke.pluginAddPath('./python/Cryptomatte')
 
-import cryptomatte_utilities
-cryptomatte_utilities.setup_cryptomatte()
+
+## bmTools -----------------------------------------------------------------------------
+nuke.pluginAddPath('./gizmos/bm_Tools')
+nuke.pluginAddPath('./icons/bm_Tools')
 
 
 
 ## Xtools ------------------------------------------------------------------------------
-nuke.pluginAddPath('./python/X_Tools')
-nuke.pluginAddPath('./python/X_Tools/Icons')
-nuke.pluginAddPath('./python/X_Tools/Gizmos')
+nuke.pluginAddPath('./gizmos/X_Tools')
+nuke.pluginAddPath('./icons/X_Tools')
+
 
 
 
 ## KeenTools ---------------------------------------------------------------------------
 nuke.pluginAddPath('./python/KeenTools')
-
 
