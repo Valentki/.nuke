@@ -26,6 +26,7 @@ import platform
 import lmnShuffle
 import listNavigator
 import filePathLister
+import pasteSelected
 
 ## Third Party modules -----------------------------------------------------------------
 ##-----Cryptomatte ----Copyright (c) 2014, 2015, 2016, 2017 Psyop Media Company, LLC----
@@ -91,10 +92,9 @@ ltg = lt.addMenu('Gizmos')
 lts = lt.addMenu('Scripts')
 lts.addCommand('Autocrop', 'nukescripts.autocrop()')   ## this is nuke native
 
-
 ltn = lt.addMenu('Nukepedia')
-ltn.addCommand('expoglow', "nuke.createNode('expoglow')")
-ltn.addCommand('aov_krakout', "nuke.createNode('aov_krakout')")
+ltn.addCommand('Expoglow', "nuke.createNode('expoglow')")
+ltn.addCommand('AOV_Krakout', "nuke.createNode('aov_krakout')")
 ltn.addCommand('Bloom', "nuke.createNode('Bloom')")
 ltn.addCommand('Breakdown_Maker', "nuke.createNode('Breakdown_Maker')")
 ltn.addCommand('Breakdown_Tool', "nuke.createNode('Breakdown_Tool')")
@@ -137,8 +137,8 @@ X_lm.addCommand("X_Tesla", "nuke.createNode(\"X_Tesla\")", icon="X_Tesla.png")
 mergeMenu = nuke.menu('Nodes').findItem("Merge/Merges")
 
 mergeMenu.addCommand('Stencil', 'nuke.createNode("Merge2","operation stencil bbox B")', icon="MergeOut.png")
-mergeMenu.addCommand('Divide', 'nuke.createNode("Merge2", "operation divide")', icon="In.png")
-mergeMenu.addCommand('Mask', 'nuke.createNode("Merge2", "operation mask bbox A")', icon="In.png")
+mergeMenu.addCommand('Divide', 'nuke.createNode("Merge2", "operation divide")', icon="MergeIn.png")
+mergeMenu.addCommand('Mask', 'nuke.createNode("Merge2", "operation mask bbox A")', icon="MergeIn.png")
 
 filterMenu = nuke.menu('Nodes').findItem("Filter")
 filterMenu.addCommand('Blocky',"nuke.createNode('Blocky')")
