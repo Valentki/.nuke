@@ -1,11 +1,11 @@
 ##************************************************************************************##
 ## -------------------------------------------------------------------------------------
 # listNavigator.py
-# Version: 1.0.0 (Major,Minor,Revision)
+# Version: 1.0.1 (Major,Minor,Revision)
 # Author: Ben McEwan
 #
 # Last Modified by: Kalvin Irawan
-# Last Updated: September 11th, 2019
+# Last Updated: September 13th, 2019
 ## -------------------------------------------------------------------------------------
 ##************************************************************************************##
 
@@ -21,16 +21,54 @@ import os
 
 def filePathLister():
 
-	print "\n\nNuke Script: "+os.path.basename(nuke.root()['name'].value())
-	print "\nFILE & VERSION LIST"
+	## the os path basename will give you the root file name without giving the complete path file
+	
+	##print "\n\nNuke Script: "+os.path.basename(nuke.root()['name'].value())
+	##print "\nFILE & VERSION LIST"
 
-	node_classes = ['Read','ReadGeo','Camera']
+	nukeScript ="\n\nNuke Script:\n"+os.path.basename(nuke.root()['name'].value())+"\n\n"
+	fileVersion = "\nFILE & VERSION LIST\n\n"
+
+	node_classes = ['Read']
 	node_list = []
 
-	for i in nuke.allNodes():
-		for x in node_classes:
-			if i.knob('file') and i.Class()== x:
+	infoMessage = []
+
+	infoMessage.append(nukeScript)
+	infoMessage.append(fileVersion)
+
+	for i in nuke.allNodes():   ## to get all nodes in your nuke script
+		for x in node_classes:	## to go through the list of variable "node_classes"
+			if i.knob('file') and i.Class() == x:
 				node_list.append(i)
 
-	for node in node_list:
-		print node.name()
+
+	if node_list:		## If node_list is not empty, run the following script
+
+
+		for node in node_list:
+			filepath = node['file'].value() ## or node.knob('file').value()
+			filename = os.path.basename(filepath)
+
+			# print node.name() + " = " + filename ## ---> This will return  file name with version number
+			# But we want to seperate the filename and the version number
+
+			filename_no_version = filename[0:filename.find('_v')] ## we want to return whatever the name before "_v"
+			version_number = filename[filename.find('_v')+1:filename.find('_v')+6] ## diff to each specific project (how many # at version naming)
+
+			infoMessage.append("You are using "+version_number+" of "+filename_no_version+"\n")
+
+			
+
+		# We need to combine all item into one item with =''.join
+		infoMessage=''.join(infoMessage)
+
+		nuke.message(infoMessage)
+			
+
+
+	else:
+		nuke.message("You don't have any Read node in your script!")
+
+
+nuke.menu('Nuke').addCommand("Lumine/Script/File Path Lister",'filePathLister.filePathLister()','Shift+f',shortcutContext=2)
