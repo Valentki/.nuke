@@ -1,0 +1,31 @@
+##************************************************************************************##
+## -------------------------------------------------------------------------------------
+# listNavigator.py
+# Version: 1.0.0 (Major,Minor,Revision)
+# Author: Ben McEwan
+#
+# Last Modified by: Kalvin Irawan
+# Last Updated: September 13th, 2019
+## -------------------------------------------------------------------------------------
+##************************************************************************************##
+
+
+## -------------------------------------------------------------------------------------
+# USAGE:
+#
+# - Pastes previous-copied node to all the selected nodes.
+## -------------------------------------------------------------------------------------
+
+import nuke
+
+def pasteSelected():
+
+	for i in nuke.selectedNodes():
+		i.setSelected(True)
+		nuke.nodePaste("%clipboard%")
+
+
+
+## Add to Lumine Tab
+
+nuke.menu('Nuke').addCommand("Edit/Paste Selected","pasteSelected.pasteSelected()","Ctrl+Shift+V",shortcutContext=2)
