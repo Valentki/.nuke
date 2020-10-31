@@ -1,0 +1,215 @@
+#===================================================================================================
+# name                    = script_manager.py
+# content                 = to kickstart or open pre-existing nuke script.
+#
+# version                 = 0.0.2
+# creation date           = 2019-12-03
+# late updates            = 2020-10-31
+#
+# how to                  = Alt + Shift + E to launch
+# dependencies            = Nuke
+# to dos                  = - option to read incoming colorspace
+#                           - update scripts to make it scalable (tons of hardcoded value)
+#
+# author                  = Kalvin Irawan, Herdian Saputra
+# last updated by         = Kalvin Irawan
+#===================================================================================================
+
+
+import os
+import nuke
+
+
+# define script_manager
+def script_manager():
+    #create window with options
+    script_manager_panel = nuke.Panel('LMN Script Manager | FFG')
+    script_manager_panel.setWidth(400)
+    script_manager_panel.addEnumerationPulldown('Choose Action', 'StartProject LoadExisting')
+    script_manager_panel.addEnumerationPulldown('Artist', 'axellyaJesslyn dikiEka herdianSaputra kalvinIrawan meikeAngelina nadyaSastrawinata rafaelaAgnes tamiWijoyo ariWibowo')
+    script_manager_panel.addEnumerationPulldown('Show', 'FFG GKC SDGK SBL')  # to be filled manually
+    script_manager_panel.addEnumerationPulldown('Sequence', 'JMH CHS FBT MMA CLM VB')  # to be filled manually
+    script_manager_panel.addEnumerationPulldown('Work Type', 'comp rotoPrep tracking')
+    script_manager_panel.addBooleanCheckBox('Slap Comp (For Lighter)', False)
+    script_manager_panel.addSingleLineInput('Shot Number', '000')
+    script_manager_panel.addSingleLineInput('Comp Version', '001')
+    script_manager_panel.addBooleanCheckBox('Pick latest version instead', False)
+    script_manager_panel.addBooleanCheckBox('Include Write?', True)
+
+    script_manager_panel.show()
+
+    # get value from user options 
+    comper        = script_manager_panel.value('Artist')
+    showPick      = script_manager_panel.value('Show')
+    sequencePick  = script_manager_panel.value('Sequence')
+    shotNumber    = script_manager_panel.value('Shot Number')
+    compVersion   = script_manager_panel.value('Comp Version')
+    actionValue   = script_manager_panel.value('Choose Action')
+    versionValue  = script_manager_panel.value('Pick latest version instead')
+    renderValue   = script_manager_panel.value('Include Write?')
+
+    # set value if 'Slap Comp' is clicked
+    workType = ''
+    if script_manager_panel.value('Slap Comp (For Lighter)') == True:
+        workType = 'LSC'
+    else :
+        workType = script_manager_panel.value('Work Type')
+
+
+    compType = ''
+    if script_manager_panel.value('Slap Comp (For Lighter)') == True:
+        compType = 'LSC'
+    else:
+        compType = 'comp'
+
+
+    projectFolder = ''
+    if script_manager_panel.value('Slap Comp (For Lighter)') == True:
+        projectFolder = 'lighting'
+    else:
+        projectFolder = 'compositing'
+
+    # folder directory
+    shotDirectory = "W:/{}/production/sequence/{}/{}_sh_{}/lighting/images/".format(showPick, 
+                                                                                    sequencePick,
+                                                                                    sequencePick, 
+                                                                                    shotNumber)
+    shotFolder    = "W:/{}/production/sequence/{}/{}_sh_{}/{}/{}/{}/".format(showPick, 
+                                                                             sequencePick,
+                                                                             sequencePick,
+                                                                             shotNumber,
+                                                                             projectFolder,
+                                                                             workType,
+                                                                             comper)
+    shotFileName  = "W:/{}/production/sequence/{}/{}_sh_{}/{}/{}/{}/{}_sh_{}_{}_v{}.nk".format(showPick,
+                                                                                               sequencePick,
+                                                                                               sequencePick,
+                                                                                               shotNumber,
+                                                                                               projectFolder,
+                                                                                               workType,
+                                                                                               comper,
+                                                                                               sequencePick,
+                                                                                               shotNumber,
+                                                                                               compType,
+                                                                                               compVersion)
+    writeFileExr  = "W:/{}/mastering/input/{}/render/{}_sh_{}/{}_sh_{}.####.exr".format(showPick,
+                                                                                        sequencePick,
+                                                                                        sequencePick,
+                                                                                        shotNumber,
+                                                                                        sequencePick,
+                                                                                        shotNumber)
+    writeFileJpg  = "W:/{}/production/sequence/{}/{}_master/styleframe/{}_sh_{}.jpg".format(showPick,
+                                                                                            sequencePick,
+                                                                                            sequencePick,
+                                                                                            sequencePick,
+                                                                                            shotNumber)
+    writeFileMov  = "W:/{}/production/review/sequence/{}/{}_sh_{}/{}/{}_sh_{}_{}_v001.mov".format(showPick, 
+                                                                                                  sequencePick,
+                                                                                                  sequencePick,
+                                                                                                  shotNumber,
+                                                                                                  projectFolder,
+                                                                                                  sequencePick,
+                                                                                                  shotNumber,
+                                                                                                  compType)
+
+    # assign value to available render pass 
+    footageValue     = script_manager_panel.value("Footage")
+    environmentValue = script_manager_panel.value("Environment")
+    characterValue   = script_manager_panel.value("Character")
+    propsValue       = script_manager_panel.value("Props")
+    fxValue          = script_manager_panel.value("FX")
+    renderOutput    = 'Output - Rec.709'
+
+
+    # create function to start project
+    if actionValue == "StartProject":
+        imported_render_passes = []
+
+        for r, d, f in os.walk(shotDirectory):
+            imported_render_passes.append(r)
+        imported_render_passes.pop(0)
+
+        for render_pass in imported_render_passes:
+            splitFilenames = i.split("/")
+            folder_of_file = i + "/"
+
+            for sequence in nuke.getFileNameList(folder_of_file):
+                readNode = nuke.createNode('Read')
+                readNode.knob('file').fromUserText(folder_of_file + sequence)
+
+        if renderValue == True:
+            nuke.nodes.Write(file=writeFileMov, label='MOV Export', colorspace=renderOutput, file_type='mov',
+                             meta_codec=12, mov64_bitrate = '600000', mov64_quality_max = '16', create_directories = True)
+
+            if  script_manager_panel.value('Slap Comp (For Lighter)') == True:
+                nuke.nodes.Write(file=writeFileJpg, label='StyleFrame', colorspace=renderOutput, file_type='jpeg', create_directories = True)
+            else :
+                nuke.nodes.Write(file=writeFileExr, label='EXR Export', colorspace='scene_linear', file_type='exr', create_directories = True )
+
+        for read_node in nuke.allNodes('Read'):
+            read_node.autoplace()
+        for write_node in nuke.allNodes('Write'):
+            write_node.autoplace()
+
+
+        # saving script
+        try:
+            if not os.path.exists(shotFolder):
+                os.makedirs(shotFolder)
+                nuke.scriptSaveAs(shotFileName)
+                nuke.message('Script created!')
+            elif os.path.exists(shotFileName):
+                nuke.message('Path already exists! Save with different version number or overwrite the pre-existing script.')
+                nuke.scriptSaveAs(shotFileName)
+                nuke.message('Script created!')
+            elif not os.path.exists(shotFileName):
+                nuke.scriptSaveAs(shotFileName)
+                nuke.message('New version of the script has been created!')
+            else:
+                nuke.scriptSaveAs(shotFileName)
+                nuke.message('Script created!')
+        except:
+            nuke.message('Failed creating script.')
+
+
+
+    # create function to open existing project
+    else:
+        try:
+            list_of_files = []
+
+            for r, d, f in os.walk(shotFolder):
+                list_of_files.append(f)
+
+            project_files  = list_of_files[-1]
+            target_files   = [x for x in project_files if '~' not in x and 'test' not in x and 'fx' not in x and 'comp' in x and 'autosave' not in x]
+            target_files.sort()
+            latest_file    = target_files[-1]
+
+            if versionValue == True:
+                openFileName = "W:/{}/production/sequence/{}/{}_sh_{}/{}/{}/{}/{}".format(showPick,
+                                                                                          sequencePick,
+                                                                                          sequencePick,
+                                                                                          shotNumber,
+                                                                                          projectFolder, 
+                                                                                          workType,
+                                                                                          comper,
+                                                                                          latest_file)
+            else:
+                openFileName = "W:/{}/production/sequence/{}/{}_sh_{}/{}/{}/{}/{}_sh_{}_{}_v{}.nk".format(showPick,
+                                                                                                          sequencePick,
+                                                                                                          sequencePick,
+                                                                                                          shotNumber,
+                                                                                                          projectFolder,
+                                                                                                          workType,
+                                                                                                          comper,
+                                                                                                          sequencePick,
+                                                                                                          shotNumber,
+                                                                                                          workType,
+                                                                                                          compVersion)
+
+            nuke.scriptOpen(openFileName)
+            nuke.message('Project found!')
+
+        except:
+            nuke.message('Cannot find specified script!')
